@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types: [new-release]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   handle:
     runs-on: ubuntu-latest
