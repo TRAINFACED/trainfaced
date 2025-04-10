@@ -14,14 +14,16 @@ jobs:
         with:
           token: ${{ secrets.METADATA_REPO_PAT }}
 
+      - name: Write config to file
+        run: |
+            mkdir -p tmp
+            echo '${{ toJson(github.event.client_payload.config) }}' > tmp/config.json
+
       - name: Extract Payload
         id: vars
         run: |
             echo "REPO=${{ github.event.client_payload.sender }}" >> $GITHUB_ENV
             echo "VERSION=${{ github.event.client_payload.version }}" >> $GITHUB_ENV
-            echo "CONFIG<<EOF" >> $GITHUB_ENV
-            echo "${{ toJson(github.event.client_payload.config) }}" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
 
       - name: Parse Version
         run: |
@@ -34,7 +36,6 @@ jobs:
         run: |
             echo "REPO=$REPO"
             echo "VERSION=$VERSION"
-            echo "CONFIG=$CONFIG"
             echo "GITHUB_ACTOR=$GITHUB_ACTOR"
             echo "MAJOR=$MAJOR"
             echo "MINOR=$MINOR"
@@ -42,8 +43,14 @@ jobs:
 
       - name: Create Metadata File
         run: |
-            mkdir -p ${REPO}/${MAJOR}/${MINOR}
-            echo "$CONFIG" > ${REPO}/${MAJOR}/${MINOR}/${PATCH}.json
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+            mkdir -p "${REPO}/${MAJOR}/${MINOR}"
+            cp tmp/config.json "${REPO}/${MAJOR}/${MINOR}/${PATCH}.json"
+            rm tmp/config.json
+    #   - name: Create Metadata File
+    #     run: |
+    #         mkdir -p ${REPO}/${MAJOR}/${MINOR}
+    #         cp tmp/config.json "${REPO}/${MAJOR}/${MINOR}/${PATCH}.json"
 
       - name: Compute safe branch name
         id: branch
