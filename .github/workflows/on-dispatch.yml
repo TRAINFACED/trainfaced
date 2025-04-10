@@ -4,9 +4,7 @@ on:
   repository_dispatch:
     types: [new-release]
 
-permissions:
-  contents: write
-  pull-requests: write
+
 
 jobs:
   handle:
@@ -46,7 +44,7 @@ jobs:
       - name: Commit + Open PR
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.METADATA_REPO_PAT }}
           commit-message: "Add metadata for ${REPO}@${VERSION}"
           title: "Add metadata for ${REPO}@${VERSION}"
           body: |
