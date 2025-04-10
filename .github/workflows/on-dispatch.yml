@@ -20,7 +20,7 @@ jobs:
             echo "REPO=${{ github.event.client_payload.sender }}" >> $GITHUB_ENV
             echo "VERSION=${{ github.event.client_payload.version }}" >> $GITHUB_ENV
             echo "CONFIG<<EOF" >> $GITHUB_ENV
-            echo '${{ toJson(github.event.client_payload.config) }}' >> $GITHUB_ENV
+            echo "${{ toJson(github.event.client_payload.config) }}" >> $GITHUB_ENV
             echo "EOF" >> $GITHUB_ENV
 
       - name: Parse Version
