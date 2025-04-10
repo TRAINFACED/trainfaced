@@ -16,7 +16,7 @@ jobs:
 
       - name: Dump dispatch payload
         run: |
-            echo "${{ toJson(github.event.client_payload) }}"
+            echo "${{ github.event.client_payload }}"
 
       - name: Write config to file
         run: |
