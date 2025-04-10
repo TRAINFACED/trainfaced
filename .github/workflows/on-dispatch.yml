@@ -9,11 +9,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
       - name: Extract Payload
         id: vars
         run: |
           echo "REPO=${{ github.event.client_payload.sender }}" >> $GITHUB_ENV
           echo "VERSION=${{ github.event.client_payload.version }}" >> $GITHUB_ENV
+          echo 'REPO=${{ github.event.repository.full_name }}' >> $GITHUB_ENV
           echo 'CONFIG<<EOF' >> $GITHUB_ENV
           echo '${{ toJson(github.event.client_payload.config) }}' >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
