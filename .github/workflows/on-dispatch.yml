@@ -1,0 +1,44 @@
+name: Handle Metadata Dispatch
+
+on:
+  repository_dispatch:
+    types: [new-release]
+
+jobs:
+  handle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract Payload
+        id: vars
+        run: |
+          echo "REPO=${{ github.event.client_payload.sender }}" >> $GITHUB_ENV
+          echo "VERSION=${{ github.event.client_payload.version }}" >> $GITHUB_ENV
+          echo 'CONFIG<<EOF' >> $GITHUB_ENV
+          echo '${{ toJson(github.event.client_payload.config) }}' >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - name: Parse Version
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${VERSION}"
+          echo "MAJOR=$MAJOR" >> $GITHUB_ENV
+          echo "MINOR=$MINOR" >> $GITHUB_ENV
+          echo "PATCH=$PATCH" >> $GITHUB_ENV
+
+      - name: Create Metadata File
+        run: |
+          mkdir -p output/${REPO}/${MAJOR}/${MINOR}
+          echo "$CONFIG" > output/${REPO}/${MAJOR}/${MINOR}/${PATCH}.json
+
+      - name: Commit + Open PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Add metadata for ${REPO}@${VERSION}"
+          title: "Add metadata for ${REPO}@${VERSION}"
+          body: |
+            This PR contains configuration metadata for:
+            - Repo: `${REPO}`
+            - Version: `${VERSION}`
+          branch: metadata-${REPO//\//-}-${VERSION}
+          path: output
