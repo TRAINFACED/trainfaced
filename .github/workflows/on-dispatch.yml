@@ -33,6 +33,12 @@ jobs:
             mkdir -p ${REPO}/${MAJOR}/${MINOR}
             echo "$CONFIG" > ${REPO}/${MAJOR}/${MINOR}/${PATCH}.json
 
+      - name: Compute safe branch name
+        id: branch
+        run: |
+            safe_repo_name="${REPO//\//-}"
+            echo "safe_repo_name=$safe_repo_name" >> $GITHUB_OUTPUT
+            echo "branch_name=metadata-${safe_repo_name}-${VERSION}" >> $GITHUB_OUTPUT
       - name: Commit + Open PR
         uses: peter-evans/create-pull-request@v6
         with:
@@ -43,4 +49,4 @@ jobs:
             This PR contains configuration metadata for:
             - Repo: `${REPO}`
             - Version: `${VERSION}`
-          branch: metadata-${REPO//\//-}-${VERSION}
+          branch: ${{ steps.branch.outputs.branch_name }}
