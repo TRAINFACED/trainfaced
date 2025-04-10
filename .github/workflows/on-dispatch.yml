@@ -51,10 +51,6 @@ jobs:
             mkdir -p "${REPO}/${MAJOR}/${MINOR}"
             cp tmp/config.json "${REPO}/${MAJOR}/${MINOR}/${PATCH}.json"
             rm tmp/config.json
-    #   - name: Create Metadata File
-    #     run: |
-    #         mkdir -p ${REPO}/${MAJOR}/${MINOR}
-    #         cp tmp/config.json "${REPO}/${MAJOR}/${MINOR}/${PATCH}.json"
 
       - name: Compute safe branch name
         id: branch
@@ -72,10 +68,10 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.METADATA_REPO_PAT }}
-          commit-message: "Add metadata for ${REPO}@${VERSION}"
-          title: "Add metadata for ${REPO}@${VERSION}"
+          commit-message: "Add metadata for ${{ env.REPO }}@${{ env.VERSION }}"
+          title: "Add metadata for ${{ env.REPO }}@${{ env.VERSION }}"
           body: |
             This PR contains configuration metadata for:
-            - Repo: `${REPO}`
-            - Version: `${VERSION}`
+            - Repo: `${{ env.REPO }}`
+            - Version: `${{ env.VERSION }}`
           branch: ${{ steps.branch.outputs.branch_name }}
