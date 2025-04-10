@@ -59,7 +59,7 @@ jobs:
             git config user.email "metadata-bot@users.noreply.github.com"
 
       - name: Commit + Open PR
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.METADATA_REPO_PAT }}
           commit-message: "Add metadata for ${REPO}@${VERSION}"
