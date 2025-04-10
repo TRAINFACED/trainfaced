@@ -30,8 +30,8 @@ jobs:
 
       - name: Create Metadata File
         run: |
-          mkdir -p output/${REPO}/${MAJOR}/${MINOR}
-          echo "$CONFIG" > output/${REPO}/${MAJOR}/${MINOR}/${PATCH}.json
+            mkdir -p ${REPO}/${MAJOR}/${MINOR}
+            echo "$CONFIG" > ${REPO}/${MAJOR}/${MINOR}/${PATCH}.json
 
       - name: Commit + Open PR
         uses: peter-evans/create-pull-request@v6
@@ -44,4 +44,3 @@ jobs:
             - Repo: `${REPO}`
             - Version: `${VERSION}`
           branch: metadata-${REPO//\//-}-${VERSION}
-          path: output
